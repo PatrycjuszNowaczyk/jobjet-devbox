@@ -1,0 +1,21 @@
+name: Check PR Source
+
+on:
+  pull_request:
+    branches:
+      - master  # Only run the action on pull requests targeting master
+
+jobs:
+  check_branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if PR is from development branch
+        if: github.event.pull_request.head.ref == 'development'
+        run: echo "This pull request is from development to master."
+      
+      - name: Fail if PR is not from development branch
+        if: github.event.pull_request.head.ref != 'development'
+        run: |
+          echo "Error: Pull request must be from development to master."
+          exit 1
