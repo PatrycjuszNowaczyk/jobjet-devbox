@@ -1,0 +1,84 @@
+services:
+  frontend:
+    container_name: cvcom-frontend
+    build:
+      context: ./docker/frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+      - db
+      - redis
+    volumes:
+      - ../frontend:/var/www/html:rw
+    working_dir: /var/www/html
+    networks:
+      - default
+    ports:
+      - "3000:3000"
+    restart: always
+    command: "npm run dev"
+
+  backend:
+    container_name: cvcom-backend
+    build:
+      context: ./docker/backend
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./docker/backend/php.ini:/usr/local/etc/php/php.ini
+      - ../backend:/var/www/html:rw
+    working_dir: /var/www/html
+    networks:
+      - default
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: always
+    command: php-fpm
+
+  db:
+    container_name: cvcom-db
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: cvcom
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - default
+    restart: always
+
+  redis:
+    container_name: cvcom-redis
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+    restart: always
+
+  nginx:
+    container_name: cvcom-nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - default
+    restart: always
+
+volumes:
+  db_data:
+  redis_data:
+
+networks:
+  default:
+    driver: bridge
