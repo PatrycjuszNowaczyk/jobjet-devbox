@@ -1,6 +1,6 @@
 services:
   frontend:
-    container_name: cvcom-frontend
+    container_name: ${APP_NAME}-frontend
     build:
       context: ./docker/frontend
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
     command: "npm run dev"
 
   backend:
-    container_name: cvcom-backend
+    container_name: ${APP_NAME}-backend
     build:
       context: ./docker/backend
       dockerfile: Dockerfile
@@ -38,7 +38,7 @@ services:
     command: php-fpm
 
   db:
-    container_name: cvcom-db
+    container_name: ${APP_NAME}-db
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -52,7 +52,7 @@ services:
     restart: always
 
   redis:
-    container_name: cvcom-redis
+    container_name: ${APP_NAME}-redis
     image: redis:alpine
     volumes:
       - redis_data:/data
@@ -61,7 +61,7 @@ services:
     restart: always
 
   nginx:
-    container_name: cvcom-nginx
+    container_name: ${APP_NAME}-nginx
     image: nginx:alpine
     ports:
       - "80:80"
