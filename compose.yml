@@ -23,6 +23,8 @@ services:
     build:
       context: ./docker/backend
       dockerfile: Dockerfile
+    environment:
+      - PATH=$PATH:/var/www/html/bin
     depends_on:
       - db
       - redis
