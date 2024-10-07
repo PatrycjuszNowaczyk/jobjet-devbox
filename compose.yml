@@ -75,6 +75,23 @@ services:
       - default
     restart: always
 
+  phpmyadmin:
+    container_name: ${APP_NAME}-phpmyadmin
+    image: phpmyadmin:latest
+    environment:
+      - PMA_HOSTS=${APP_NAME}-db
+      - PMA_DATABASE=${APP_NAME}
+      - PMA_USER=user
+      - PMA_PASSWORD=password
+      - PMA_ROOT_PASSWORD=password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - default
+    restart: always
+
 volumes:
   db_data:
   redis_data:
